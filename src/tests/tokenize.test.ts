@@ -13,6 +13,17 @@ describe('tokenizing note letters', (): void => {
         expect(tokenize('ABPDER')).toEqual(['A', 'B', 'P', 'D', 'E', 'R']);
     });
 
+    it('ignores white space', (): void => {
+        expect(tokenize('A B\n     P\t \n D   ER \n  \n\n ')).toEqual([
+            'A',
+            'B',
+            'P',
+            'D',
+            'E',
+            'R',
+        ]);
+    });
+
     it.each([
         ['ABWD', 'W'],
         ['ZACE', 'Z'],
@@ -38,7 +49,7 @@ describe('tokenizing note letters with attached durations', (): void => {
 describe('handling non-tokenizable operators/modifiers', (): void => {
     it('does not tokenize valid MML characters that are not related to individual notes or rests', (): void => {
         expect(tokenize('T100L4V10O5<>')).toEqual([]);
-        expect(tokenize('T180LA4C16<DC8>V8T130')).toEqual(['C16', 'D', 'C8']);
+        expect(tokenize('T180L4C16<DC8>V8T130')).toEqual(['C16', 'D', 'C8']);
     });
 });
 
@@ -55,9 +66,7 @@ describe('tokenizing with accidentals', (): void => {
     });
 
     it('throws RangeError if accidental not attached to a note letter', (): void => {
-        const AccidentalError = new RangeError(
-            `Accidentals must be preceded by a note letter.`
-        );
+        const AccidentalError = new RangeError(`Accidentals must be preceded by a note letter.`);
         expect((): string[] => tokenize('C4#')).toThrow(AccidentalError);
         expect((): string[] => tokenize('B#2C4.-')).toThrow(AccidentalError);
         expect((): string[] => tokenize('C##')).toThrow(AccidentalError);
@@ -73,9 +82,7 @@ describe('tokenizing durations with dots', (): void => {
     });
 
     it('throws RangeError if dot not attached to a duration', (): void => {
-        const DotError = new RangeError(
-            `Dots must be preceded by a note duration or another dot.`
-        );
+        const DotError = new RangeError(`Dots must be preceded by a note duration or another dot.`);
         expect((): string[] => tokenize('A.')).toThrow(DotError);
         expect((): string[] => tokenize('B4.C..')).toThrow(DotError);
         expect((): string[] => tokenize('T120.')).toThrow(DotError);
