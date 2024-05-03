@@ -9,9 +9,13 @@ describe('tokenizing note letters', (): void => {
         expect(tokenize(inputString)).toEqual(outputArray);
     });
 
+    it('treats P and R (rests) as note letters', (): void => {
+        expect(tokenize('ABPDER')).toEqual(['A', 'B', 'P', 'D', 'E', 'R']);
+    });
+
     it.each([
         ['ABWD', 'W'],
-        ['PACE', 'P'],
+        ['ZACE', 'Z'],
     ])(
         'tokenizing %s throws RangeError because %s is not in the musical alphabet',
         (inputString, badChar): void => {
@@ -32,7 +36,7 @@ describe('tokenizing note letters with attached durations', (): void => {
 });
 
 describe('handling non-tokenizable operators/modifiers', (): void => {
-    it('does not tokenize valid MML characters that are not related to individual notes', (): void => {
+    it('does not tokenize valid MML characters that are not related to individual notes or rests', (): void => {
         expect(tokenize('T100L4V10O5<>')).toEqual([]);
         expect(tokenize('T180LA4C16<DC8>V8T130')).toEqual(['C16', 'D', 'C8']);
     });
