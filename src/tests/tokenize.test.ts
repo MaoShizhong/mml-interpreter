@@ -75,7 +75,7 @@ describe('tokenizing with accidentals', (): void => {
 
 describe('tokenizing durations with dots', (): void => {
     it.each([
-        ['A2.C#4G-.F32.', ['A2.', 'C#4', 'G-.', 'F32.']],
+        ['A2.C#4G-4.F32.', ['A2.', 'C#4', 'G-4.', 'F32.']],
         ['B16..C4.G8..', ['B16..', 'C4.', 'G8..']],
     ])('tokenizes %s into %p', (inputString, outputArray): void => {
         expect(tokenize(inputString)).toEqual(outputArray);
