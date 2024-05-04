@@ -1,3 +1,4 @@
+import { setModifiers } from './modifiers';
 import { Modifiers } from './types';
 
 const NOTE_LETTERS = 'ABCDEFGPR';
@@ -39,7 +40,7 @@ function throwRangeErrorIfInvalidMML(
  *
  * tempo = 120
  *
- * noteDuration = 4
+ * lengthOfNote = 4
  *
  * octave = 4
  *
@@ -53,7 +54,7 @@ export function tokenize(
     input: string,
     defaultModifiers: Modifiers = {
         tempo: 120,
-        noteDuration: 4,
+        lengthOfNote: 4,
         octave: 4,
         volume: 10,
     }
@@ -61,8 +62,7 @@ export function tokenize(
     input = input.replaceAll(/\s/g, '').toUpperCase();
 
     const tokens: string[] = [];
-    // @ts-expect-error
-    const currentModifiers = defaultModifiers;
+    const modifiers = defaultModifiers;
     let currentTokenString = '';
     let currentModifierString = '';
     for (const char of input) {
@@ -83,6 +83,7 @@ export function tokenize(
         // handle decisions
         if (isNoteLetter) {
             tokens.push(currentTokenString);
+            setModifiers(modifiers, currentModifierString);
             currentModifierString = '';
             currentTokenString = char;
         } else if (isSharp) {

@@ -1,6 +1,2 @@
-export type Modifiers = {
-    tempo: number;
-    noteDuration: number;
-    octave: number;
-    volume: number;
-}
+export type Modifier = 'tempo' | 'lengthOfNote' | 'octave' | 'volume';
+export type Modifiers = Record<Modifier, number>;

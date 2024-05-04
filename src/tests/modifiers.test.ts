@@ -4,14 +4,14 @@ import { Modifiers } from '../types';
 describe('sets modifiers', (): void => {
     const DEFAULT_MODIFIERS: Modifiers = {
         tempo: 120,
-        noteDuration: 4,
+        lengthOfNote: 4,
         octave: 4,
         volume: 10,
     };
 
     it.each([
         ['tempo', 150, 200],
-        ['noteDuration', 2, 16],
+        ['lengthOfNote', 2, 16],
         ['octave', 2, 5],
         ['volume', 20, 30],
     ])(
