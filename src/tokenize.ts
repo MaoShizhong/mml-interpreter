@@ -75,27 +75,32 @@ export function tokenize(
         // Number('0') === false
         const isDurationNumber =
             NUMBERS.includes(char) && !currentModifierString.length;
-        const isNoteLetter = NOTE_LETTERS.includes(char);
-        const isSharp = SHARPS.includes(char);
-        const isModifier =
-            NON_TOKENIZABLES.includes(char) || NUMBERS.includes(char);
 
-        // handle decisions
-        if (isNoteLetter) {
+        if (NOTE_LETTERS.includes(char)) {
             tokens.push(currentTokenString);
             setModifiers(modifiers, currentModifierString);
             currentModifierString = '';
             currentTokenString = char;
-        } else if (isSharp) {
+        } else if (SHARPS.includes(char)) {
             // Quirk of Modern MML allows for both + and # as sharps, but only a single flat character
             currentTokenString += '#';
         } else if (char === FLAT || char === DOT || isDurationNumber) {
             currentTokenString += char;
-        } else if (isModifier) {
+        } else if (PROPERTY_LETTERS.includes(char)) {
+            setModifiers(modifiers, currentModifierString);
+            currentModifierString = char;
+        } else if (OCTAVE_SHIFTS.includes(char)) {
+            const newOctave =
+                char === '<' ? modifiers.octave - 1 : modifiers.octave + 1;
+            setModifiers(modifiers, `O${newOctave}`);
+        } else if (NUMBERS.includes(char)) {
             currentModifierString += char;
         }
     }
+
+    // Handle final token/modifier
     tokens.push(currentTokenString);
+    setModifiers(modifiers, currentModifierString);
 
     return tokens.slice(1);
 }
