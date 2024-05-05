@@ -1,5 +1,5 @@
 import { setModifiers } from '../modifiers';
-import { tokenize } from '../tokenize';
+import { split } from '../split';
 import { Modifiers } from '../types';
 
 const DEFAULT_MODIFIERS: Modifiers = {
@@ -55,7 +55,7 @@ describe('consecutive modifier segments', (): void => {
             tempo: 200,
             octave: 7,
         };
-        tokenize('T200O7', modifiersCopy);
+        split('T200O7', modifiersCopy);
         expect(modifiersCopy).toEqual(newModifiers1);
 
         const newModifiers2: Modifiers = {
@@ -64,7 +64,7 @@ describe('consecutive modifier segments', (): void => {
             octave: 3,
             volume: 30,
         };
-        tokenize('T144L8V30ABCDEFGO3', modifiersCopy);
+        split('T144L8V30ABCDEFGO3', modifiersCopy);
         expect(modifiersCopy).toEqual(newModifiers2);
     });
 });
@@ -77,7 +77,7 @@ describe('octave shift symbols', (): void => {
             ...modifiersCopy,
             octave: DEFAULT_MODIFIERS.octave + 2,
         };
-        tokenize('ABC>DE>F', modifiersCopy);
+        split('ABC>DE>F', modifiersCopy);
         expect(modifiersCopy).toEqual(newModifiers1);
     });
 
@@ -88,7 +88,7 @@ describe('octave shift symbols', (): void => {
             ...modifiersCopy,
             octave: DEFAULT_MODIFIERS.octave - 3,
         };
-        tokenize('A<<<BCDEF', modifiersCopy);
+        split('A<<<BCDEF', modifiersCopy);
         expect(modifiersCopy).toEqual(newModifiers1);
     });
 });
