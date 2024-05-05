@@ -12,6 +12,13 @@ const ACCIDENTALS = `${SHARPS}${FLAT}`;
 const NON_TOKENIZABLES = `${PROPERTY_LETTERS}${OCTAVE_SHIFTS}`;
 const VALID_MML_CHARS = `${NOTE_LETTERS}${NUMBERS}${ACCIDENTALS}${DOT}${NON_TOKENIZABLES}`;
 
+const DEFAULT_MODIFIERS = {
+    tempo: 120,
+    lengthOfNote: 4,
+    octave: 4,
+    volume: 10,
+};
+
 function throwRangeErrorIfInvalidMML(
     char: string,
     previousChar: string = '',
@@ -42,7 +49,7 @@ function throwRangeErrorIfInvalidMML(
  *
  * ---
  *
- * @description If not provided in defaultModifiers, default values for modifiers are as follows:
+ * @description If not provided in startingModifiers, default starting values are as follows:
  *
  * tempo = 120bpm
  *
@@ -52,19 +59,11 @@ function throwRangeErrorIfInvalidMML(
  *
  * volume = 10 (arbitrary - software dependent)
  */
-function tokenize(
-    input: string,
-    defaultModifiers: Modifiers = {
-        tempo: 120,
-        lengthOfNote: 4,
-        octave: 4,
-        volume: 10,
-    }
-): Token[] {
+function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
     input = input.replaceAll(/\s/g, '').toUpperCase();
 
     const tokens: Token[] = [];
-    const modifiers = defaultModifiers;
+    const modifiers = { ...DEFAULT_MODIFIERS, ...startingModifiers };
     let currentNoteString = '';
     let currentModifierString = '';
     for (const char of input) {
@@ -108,5 +107,5 @@ function tokenize(
     return tokens.slice(1);
 }
 
-export default tokenize;
-module.exports = tokenize;
+export default parse;
+module.exports = parse;

@@ -1,7 +1,7 @@
-import tokenize from '../index';
+import parse from '../index';
 
 function toMmlStringArray(input: string): string[] {
-    return tokenize(input).map((token): string => token.mmlString);
+    return parse(input).map((token): string => token.mmlString);
 }
 
 describe('tokenizing note letters', (): void => {
