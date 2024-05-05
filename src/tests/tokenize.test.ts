@@ -1,4 +1,4 @@
-import { tokenize } from '../tokenize';
+import tokenize from '../index';
 
 function toMmlStringArray(input: string): string[] {
     return tokenize(input).map((token): string => token.mmlString);

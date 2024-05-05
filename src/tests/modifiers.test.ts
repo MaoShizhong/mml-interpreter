@@ -1,5 +1,5 @@
+import tokenize from '../index';
 import { setModifiers } from '../modifiers';
-import { tokenize } from '../tokenize';
 import { Modifiers } from '../types';
 
 const DEFAULT_MODIFIERS: Modifiers = {
