@@ -52,7 +52,7 @@ function throwRangeErrorIfInvalidMML(
  *
  * volume = 10 (arbitrary - software dependent)
  */
-export default function tokenize(
+function tokenize(
     input: string,
     defaultModifiers: Modifiers = {
         tempo: 120,
@@ -107,3 +107,6 @@ export default function tokenize(
 
     return tokens.slice(1);
 }
+
+export default tokenize;
+module.exports = tokenize;

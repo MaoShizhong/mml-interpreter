@@ -1,4 +1,4 @@
-import { Modifiers } from './types';
+import { Modifiers } from './modifiers';
 
 type SemitoneShift = -1 | 0 | 1;
 type Note = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'R' | 'P';

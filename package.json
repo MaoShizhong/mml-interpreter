@@ -13,7 +13,7 @@
         "./dist/*"
     ],
     "engines": {
-        "node": ">=15.0.0"
+        "node": ">=16.14.0"
     },
     "keywords": [
         "mml",
@@ -21,11 +21,11 @@
     ],
     "license": "ISC",
     "scripts": {
-        "build": "tsc && ts-cleaner",
+        "build": "tsc -p tsconfig.prod.json && ts-cleaner",
         "dev": "tsx watch ./src/index.ts",
         "format": "prettier --write ./src/",
         "lint": "eslint",
-        "prepare": "tsc && ts-cleaner",
+        "prepare": "npm run build",
         "start": "node ./dist/index.js",
         "test": "jest --verbose ./src/tests/*.test.ts"
     },
