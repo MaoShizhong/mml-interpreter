@@ -1,4 +1,5 @@
-import { Modifier, Modifiers } from './types';
+type Modifier = 'tempo' | 'lengthOfNote' | 'octave' | 'volume';
+export type Modifiers = Record<Modifier, number>;
 
 export function setModifiers(
     modifiers: Modifiers,

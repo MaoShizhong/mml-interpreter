@@ -1,6 +1,5 @@
-import { setModifiers } from './modifiers';
+import { Modifiers, setModifiers } from './modifiers';
 import { Token } from './token';
-import { Modifiers } from './types';
 
 const NOTE_LETTERS = 'ABCDEFGPR';
 const SHARPS = '#+';

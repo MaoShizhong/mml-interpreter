@@ -1,6 +1,5 @@
 import tokenize from '../index';
-import { setModifiers } from '../modifiers';
-import { Modifiers } from '../types';
+import { Modifiers, setModifiers } from '../modifiers';
 
 const DEFAULT_MODIFIERS: Modifiers = {
     tempo: 120,
