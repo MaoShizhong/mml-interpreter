@@ -97,11 +97,20 @@ describe('tokenizing with accidentals', (): void => {
 });
 
 describe('tokenizing durations with dots', (): void => {
-    it.each([
-        ['A2.C#4G-4.F32.', ['A2.', 'C#4', 'G-4.', 'F32.']],
-        ['B16..C4.G8..', ['B16..', 'C4.', 'G8..']],
-    ])('tokenizes %s into %p', (inputString, outputArray): void => {
-        expect(toMmlStringArray(inputString)).toEqual(outputArray);
+    it('includes dotted durations in tokens', (): void => {
+        expect(toMmlStringArray('A2.C#4G-4.F32.')).toEqual([
+            'A2.',
+            'C#4',
+            'G-4.',
+            'F32.',
+        ]);
+    });
+    it('handles double-dotted durations', (): void => {
+        expect(toMmlStringArray('B16..C4.G8..')).toEqual([
+            'B16..',
+            'C4.',
+            'G8..',
+        ]);
     });
 
     it('throws RangeError if dot not attached to a duration', (): void => {

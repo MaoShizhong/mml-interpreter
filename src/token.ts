@@ -28,7 +28,7 @@ export class Token {
         const { baseNote, semitoneShift, attachedDurationMultiplier } =
             this.#splitMmlString(noteString);
         const durationMultiplier =
-            attachedDurationMultiplier ?? 4 / modifiers.lengthOfNote;
+            attachedDurationMultiplier || 4 / modifiers.lengthOfNote;
 
         this.mmlString = noteString;
         this.details = {
@@ -53,7 +53,7 @@ export class Token {
     #splitMmlString(str: string): {
         baseNote: Note;
         semitoneShift: SemitoneShift;
-        attachedDurationMultiplier: number | null;
+        attachedDurationMultiplier: number;
     } {
         const baseNote = str[0] as Note;
         let semitoneShift: SemitoneShift = 0;
@@ -65,11 +65,13 @@ export class Token {
         }
 
         const noteDuration = str.match(/\d+/g)?.[0];
-        let attachedDurationMultiplier = 4 / Number(noteDuration) || null;
+        const noteDurationMultiplier = 4 / Number(noteDuration);
 
-        if (attachedDurationMultiplier && str.includes('.')) {
-            attachedDurationMultiplier *= 1.5;
-        }
+        const dots = str.match(/\.+/g)?.[0] ?? [];
+        const dotsMultiplier = 2 - ( 1 / 2 ** dots.length);
+
+        const attachedDurationMultiplier =
+            noteDurationMultiplier * dotsMultiplier;
 
         return { baseNote, semitoneShift, attachedDurationMultiplier };
     }

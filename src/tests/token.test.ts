@@ -7,7 +7,7 @@ const DEFAULT_MODIFIERS = {
     volume: 10,
 };
 
-describe('Token object properties', (): void => {
+describe('Token object properties and values', (): void => {
     it.each([
         [
             'C4',
@@ -59,6 +59,40 @@ describe('Token object properties', (): void => {
                 volume: 10,
             },
             new Token('D#8.', { ...DEFAULT_MODIFIERS, tempo: 60 }),
+        ],
+        [
+            'D#8..',
+            {
+                mmlString: 'D#8..',
+                lengthInMs: 875,
+                pitchInHz: 311,
+                details: {
+                    midiNumber: 63,
+                    baseNote: 'D',
+                    accidental: 'sharp',
+                    lengthInCrotchets: 0.875,
+                    referenceBpm: 60,
+                },
+                volume: 10,
+            },
+            new Token('D#8..', { ...DEFAULT_MODIFIERS, tempo: 60 }),
+        ],
+        [
+            'D#4...',
+            {
+                mmlString: 'D#4...',
+                lengthInMs: 1875,
+                pitchInHz: 311,
+                details: {
+                    midiNumber: 63,
+                    baseNote: 'D',
+                    accidental: 'sharp',
+                    lengthInCrotchets: 1.875,
+                    referenceBpm: 60,
+                },
+                volume: 10,
+            },
+            new Token('D#4...', { ...DEFAULT_MODIFIERS, tempo: 60 }),
         ],
         [
             'A-',
