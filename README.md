@@ -1,8 +1,5 @@
 # mml-parser
 
-[![NPM Version][npm-version-image]][npm-url]
-[![Node.js Version][node-image]][node-url]
-
 A Modern MML parser that converts a string containing Modern MML to an array of objects for each note/rest.
 
 ## Install
