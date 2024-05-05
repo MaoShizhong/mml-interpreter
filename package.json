@@ -1,11 +1,11 @@
 {
-    "name": "mml-interpreter",
+    "name": "mml-parser",
     "version": "1.0.0",
     "author": "MaoShizhong",
     "description": "",
     "repository": {
         "type": "git",
-        "url": "https://github.com/MaoShizhong/mml-interpreter"
+        "url": "https://github.com/MaoShizhong/mml-parser"
     },
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -17,7 +17,8 @@
     },
     "keywords": [
         "mml",
-        "music macro language"
+        "music macro language",
+        "parser"
     ],
     "license": "ISC",
     "scripts": {
