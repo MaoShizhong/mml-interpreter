@@ -5,7 +5,7 @@
     "description": "",
     "repository": {
         "type": "git",
-        "url": "https://github.com/MaoShizhong/mml-parser"
+        "url": "git+https://github.com/MaoShizhong/mml-parser.git"
     },
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
