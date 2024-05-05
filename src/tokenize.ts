@@ -9,8 +9,8 @@ const NUMBERS = '1234567890';
 const PROPERTY_LETTERS = 'TLOV';
 const OCTAVE_SHIFTS = '<>';
 const ACCIDENTALS = `${SHARPS}${FLAT}`;
-const NON_SPLITTABLES = `${PROPERTY_LETTERS}${OCTAVE_SHIFTS}`;
-const VALID_MML_CHARS = `${NOTE_LETTERS}${NUMBERS}${ACCIDENTALS}${DOT}${NON_SPLITTABLES}`;
+const NON_TOKENIZABLES = `${PROPERTY_LETTERS}${OCTAVE_SHIFTS}`;
+const VALID_MML_CHARS = `${NOTE_LETTERS}${NUMBERS}${ACCIDENTALS}${DOT}${NON_TOKENIZABLES}`;
 
 function throwRangeErrorIfInvalidMML(
     char: string,
@@ -50,7 +50,7 @@ function throwRangeErrorIfInvalidMML(
  * @throws RangeError if input string contains a dot that does not follow a note duration or another dot
  * @throws RangeError if input string contains an accidental that does not follow a note letter or rest
  */
-export function split(
+export function tokenize(
     input: string,
     defaultModifiers: Modifiers = {
         tempo: 120,
@@ -61,14 +61,14 @@ export function split(
 ): string[] {
     input = input.replaceAll(/\s/g, '').toUpperCase();
 
-    const noteStrings: string[] = [];
+    const tokens: string[] = [];
     const modifiers = defaultModifiers;
-    let currentNoteString = '';
+    let currentTokenString = '';
     let currentModifierString = '';
     for (const char of input) {
         throwRangeErrorIfInvalidMML(
             char,
-            currentNoteString.at(-1),
+            currentTokenString.at(-1),
             currentModifierString
         );
 
@@ -77,15 +77,15 @@ export function split(
             NUMBERS.includes(char) && !currentModifierString.length;
 
         if (NOTE_LETTERS.includes(char)) {
-            noteStrings.push(currentNoteString);
+            tokens.push(currentTokenString);
             setModifiers(modifiers, currentModifierString);
             currentModifierString = '';
-            currentNoteString = char;
+            currentTokenString = char;
         } else if (SHARPS.includes(char)) {
             // Quirk of Modern MML allows for both + and # as sharps, but only a single flat character
-            currentNoteString += '#';
+            currentTokenString += '#';
         } else if (char === FLAT || char === DOT || isDurationNumber) {
-            currentNoteString += char;
+            currentTokenString += char;
         } else if (PROPERTY_LETTERS.includes(char)) {
             setModifiers(modifiers, currentModifierString);
             currentModifierString = char;
@@ -98,9 +98,9 @@ export function split(
         }
     }
 
-    // Handle final noteString/modifier
-    noteStrings.push(currentNoteString);
+    // Handle final token/modifier
+    tokens.push(currentTokenString);
     setModifiers(modifiers, currentModifierString);
 
-    return noteStrings.slice(1);
+    return tokens.slice(1);
 }
