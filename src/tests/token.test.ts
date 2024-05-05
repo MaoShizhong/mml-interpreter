@@ -15,6 +15,13 @@ describe('Token object properties', (): void => {
                 mmlString: 'C4',
                 lengthInMs: 500,
                 pitchInHz: 262,
+                details: {
+                    midiNumber: 60,
+                    baseNote: 'C',
+                    accidental: 'natural',
+                    lengthInCrotchets: 1,
+                    referenceBpm: 120,
+                },
                 volume: 10,
             },
             new Token('C4', DEFAULT_MODIFIERS),
@@ -25,6 +32,13 @@ describe('Token object properties', (): void => {
                 mmlString: 'D#8.',
                 lengthInMs: 375,
                 pitchInHz: 311,
+                details: {
+                    midiNumber: 63,
+                    baseNote: 'D',
+                    accidental: 'sharp',
+                    lengthInCrotchets: 0.75,
+                    referenceBpm: 120,
+                },
                 volume: 10,
             },
             new Token('D#8.', DEFAULT_MODIFIERS),
@@ -35,6 +49,13 @@ describe('Token object properties', (): void => {
                 mmlString: 'D#8.',
                 lengthInMs: 750,
                 pitchInHz: 311,
+                details: {
+                    midiNumber: 63,
+                    baseNote: 'D',
+                    accidental: 'sharp',
+                    lengthInCrotchets: 0.75,
+                    referenceBpm: 60,
+                },
                 volume: 10,
             },
             new Token('D#8.', { ...DEFAULT_MODIFIERS, tempo: 60 }),
@@ -45,6 +66,13 @@ describe('Token object properties', (): void => {
                 mmlString: 'A-',
                 lengthInMs: 1000,
                 pitchInHz: 1661,
+                details: {
+                    midiNumber: 92,
+                    baseNote: 'A',
+                    accidental: 'flat',
+                    lengthInCrotchets: 2,
+                    referenceBpm: 120,
+                },
                 volume: 10,
             },
             new Token('A-', {
@@ -59,6 +87,13 @@ describe('Token object properties', (): void => {
                 mmlString: 'R',
                 lengthInMs: 208,
                 pitchInHz: null,
+                details: {
+                    midiNumber: null,
+                    baseNote: 'R',
+                    accidental: 'natural',
+                    lengthInCrotchets: 0.5,
+                    referenceBpm: 144,
+                },
                 volume: 74,
             },
             new Token('R', {
@@ -68,7 +103,10 @@ describe('Token object properties', (): void => {
                 volume: 74,
             }),
         ],
-    ])('%s token has %o', (_, expectedToken, token): void => {
-        expect(token).toEqual(expectedToken);
-    });
+    ])(
+        '%s token contains correct properties',
+        (_, expectedToken, token): void => {
+            expect(token).toEqual(expectedToken);
+        }
+    );
 });

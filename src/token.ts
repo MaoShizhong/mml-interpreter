@@ -1,32 +1,53 @@
 import { Modifiers } from './modifiers';
 
 type SemitoneShift = -1 | 0 | 1;
+type Accidental = 'sharp' | 'flat' | 'natural';
 type Note = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'R' | 'P';
+type NoteDetails = {
+    baseNote: Note;
+    accidental: Accidental;
+    midiNumber: number | null;
+    lengthInCrotchets: number;
+    referenceBpm: number;
+};
+
+const ACCIDENTALS: Record<SemitoneShift, Accidental> = {
+    1: 'sharp',
+    0: 'natural',
+    '-1': 'flat',
+};
 
 export class Token {
     mmlString: string;
-    lengthInMs: number;
     pitchInHz: number | null;
+    lengthInMs: number;
+    details: NoteDetails;
     volume: number;
 
     constructor(noteString: string, modifiers: Modifiers) {
-        this.mmlString = noteString;
-        this.volume = modifiers.volume;
-
         const { baseNote, semitoneShift, attachedDurationMultiplier } =
             this.#splitMmlString(noteString);
         const durationMultiplier =
             attachedDurationMultiplier ?? 4 / modifiers.lengthOfNote;
 
+        this.mmlString = noteString;
+        this.details = {
+            baseNote: baseNote,
+            accidental: ACCIDENTALS[semitoneShift],
+            midiNumber: this.#getMidiNumber(
+                baseNote,
+                semitoneShift,
+                modifiers.octave
+            ),
+            lengthInCrotchets: durationMultiplier,
+            referenceBpm: modifiers.tempo,
+        };
+        this.pitchInHz = this.#noteToHz(this.details.midiNumber);
         this.lengthInMs = this.#durationToMs(
             modifiers.tempo,
             durationMultiplier
         );
-        this.pitchInHz = this.#noteToHz(
-            baseNote,
-            semitoneShift,
-            modifiers.octave
-        );
+        this.volume = modifiers.volume;
     }
 
     #splitMmlString(str: string): {
@@ -61,7 +82,7 @@ export class Token {
         return Math.round(msPerCrotchet * multiplier);
     }
 
-    #noteToHz(
+    #getMidiNumber(
         note: Note,
         semitoneShift: SemitoneShift,
         octave: number
@@ -70,17 +91,24 @@ export class Token {
             return null;
         }
 
-        const A_0 = 1;
-        const CONCERT_A = 58;
-        const CONCERT_A_HZ = 440;
+        const C0_MIDI_NUMBER = 12;
         const SEMITONES_FROM_C = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
         const SEMITONES_IN_OCTAVE = 12;
         const offsetFromA0 =
             SEMITONES_IN_OCTAVE * octave +
             SEMITONES_FROM_C[note] +
             semitoneShift;
-        const noteNumber = A_0 + offsetFromA0;
-        const semitonesFromConcertA = noteNumber - CONCERT_A;
+        return C0_MIDI_NUMBER + offsetFromA0;
+    }
+
+    #noteToHz(noteNumber: number | null): number | null {
+        if (!noteNumber) {
+            return null;
+        }
+
+        const CONCERT_A_MIDI_NUMBER = this.#getMidiNumber('A', 0, 4) as number;
+        const CONCERT_A_HZ = 440;
+        const semitonesFromConcertA = noteNumber - CONCERT_A_MIDI_NUMBER;
         const SEMITONE_RATIO = 2 ** (1 / 12);
 
         const frequencyInHz =
