@@ -6,11 +6,11 @@ const SHARPS = '#+';
 const FLAT = '-';
 const DOT = '.';
 const NUMBERS = '1234567890';
-const PROPERTY_LETTERS = 'TLOV';
+const MODIFIER_LETTERS = 'TLOV';
 const OCTAVE_SHIFTS = '<>';
 const ACCIDENTALS = `${SHARPS}${FLAT}`;
-const NON_TOKENIZABLES = `${PROPERTY_LETTERS}${OCTAVE_SHIFTS}`;
-const LETTERS = `${NOTE_LETTERS}${PROPERTY_LETTERS}`;
+const NON_TOKENIZABLES = `${MODIFIER_LETTERS}${OCTAVE_SHIFTS}`;
+const LETTERS = `${NOTE_LETTERS}${MODIFIER_LETTERS}`;
 const VALID_MML_CHARS = `${NOTE_LETTERS}${NUMBERS}${ACCIDENTALS}${DOT}${NON_TOKENIZABLES}`;
 
 const DEFAULT_MODIFIERS = {
@@ -86,25 +86,22 @@ function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
             currentNoteString = '';
         }
 
-        if (LETTERS.includes(char)) {
+        if (NOTE_LETTERS.includes(char)) {
             setModifiers(modifiers, currentModifierString);
             currentModifierString = '';
-        }
-
-        if (NOTE_LETTERS.includes(char)) {
             currentNoteString = char;
-        } else if (SHARPS.includes(char)) {
-            // Quirk of Modern MML allows for both + and # as sharps, but only a single flat character
-            currentNoteString += '#';
-        } else if (char === FLAT || char === DOT || isDurationNumber) {
-            currentNoteString += char;
-        } else if (PROPERTY_LETTERS.includes(char)) {
+        } else if (MODIFIER_LETTERS.includes(char)) {
             setModifiers(modifiers, currentModifierString);
             currentModifierString = char;
         } else if (OCTAVE_SHIFTS.includes(char)) {
             const newOctave =
                 char === '<' ? modifiers.octave - 1 : modifiers.octave + 1;
             setModifiers(modifiers, `O${newOctave}`);
+        } else if (SHARPS.includes(char)) {
+            // Quirk of Modern MML allows for both + and # as sharps, but only a single flat character
+            currentNoteString += '#';
+        } else if (char === FLAT || char === DOT || isDurationNumber) {
+            currentNoteString += char;
         } else if (NUMBERS.includes(char)) {
             currentModifierString += char;
         }
