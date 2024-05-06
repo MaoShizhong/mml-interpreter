@@ -10,6 +10,7 @@ const PROPERTY_LETTERS = 'TLOV';
 const OCTAVE_SHIFTS = '<>';
 const ACCIDENTALS = `${SHARPS}${FLAT}`;
 const NON_TOKENIZABLES = `${PROPERTY_LETTERS}${OCTAVE_SHIFTS}`;
+const LETTERS = `${NOTE_LETTERS}${PROPERTY_LETTERS}`;
 const VALID_MML_CHARS = `${NOTE_LETTERS}${NUMBERS}${ACCIDENTALS}${DOT}${NON_TOKENIZABLES}`;
 
 const DEFAULT_MODIFIERS = {
@@ -75,13 +76,22 @@ function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
 
         // Number('0') === false
         const isDurationNumber =
-            NUMBERS.includes(char) && !currentModifierString.length;
+            NUMBERS.includes(char) && currentNoteString.length;
+        const isFinishedParsingNote =
+            (LETTERS.includes(char) || OCTAVE_SHIFTS.includes(char)) &&
+            currentNoteString.length;
+
+        if (isFinishedParsingNote) {
+            tokens.push(new Token(currentNoteString, modifiers));
+            currentNoteString = '';
+        }
+
+        if (LETTERS.includes(char)) {
+            setModifiers(modifiers, currentModifierString);
+            currentModifierString = '';
+        }
 
         if (NOTE_LETTERS.includes(char)) {
-            setModifiers(modifiers, currentModifierString);
-            tokens.push(new Token(currentNoteString, modifiers));
-
-            currentModifierString = '';
             currentNoteString = char;
         } else if (SHARPS.includes(char)) {
             // Quirk of Modern MML allows for both + and # as sharps, but only a single flat character
@@ -101,10 +111,12 @@ function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
     }
 
     // Handle final token/modifier
-    tokens.push(new Token(currentNoteString, modifiers));
-    setModifiers(modifiers, currentModifierString);
+    if (currentNoteString) {
+        tokens.push(new Token(currentNoteString, modifiers));
+        setModifiers(modifiers, currentModifierString);
+    }
 
-    return tokens.slice(1);
+    return tokens;
 }
 
 export default parse;
