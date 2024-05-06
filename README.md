@@ -28,45 +28,45 @@ console.log(mmlTokens);
 
 ```javascript
 [
-  Token {
-    mmlString: 'D',
-    pitchInHz: 587,
-    lengthInMs: 156,
-    details: {
-      baseNote: 'D',
-      accidental: 'natural',
-      midiNumber: 74,
-      lengthInCrotchets: 0.5,
-      referenceBpm: 192
+    Token {
+        mmlString: 'D',
+        pitchInHz: 587,
+        lengthInMs: 156,
+        details: {
+            baseNote: 'D',
+            accidental: 'natural',
+            midiNumber: 74,
+            lengthInCrotchets: 0.5,
+            referenceBpm: 192
+        },
+        volume: 10
     },
-    volume: 10
-  },
-  Token {
-    mmlString: 'E4.',
-    pitchInHz: 330,
-    lengthInMs: 900,
-    details: {
-      baseNote: 'E',
-      accidental: 'natural',
-      midiNumber: 64,
-      lengthInCrotchets: 1.5,
-      referenceBpm: 100
+    Token {
+        mmlString: 'E4.',
+        pitchInHz: 659,
+        lengthInMs: 469,
+        details: {
+            baseNote: 'E',
+            accidental: 'natural',
+            midiNumber: 76,
+            lengthInCrotchets: 1.5,
+            referenceBpm: 192
+        },
+        volume: 10
     },
-    volume: 10
-  },
-  Token {
-    mmlString: 'F#',
-    pitchInHz: 370,
-    lengthInMs: 1200,
-    details: {
-      baseNote: 'F',
-      accidental: 'sharp',
-      midiNumber: 66,
-      lengthInCrotchets: 2,
-      referenceBpm: 100
-    },
-    volume: 10
-  }
+    Token {
+        mmlString: 'F#',
+        pitchInHz: 370,
+        lengthInMs: 1200,
+        details: {
+            baseNote: 'F',
+            accidental: 'sharp',
+            midiNumber: 66,
+            lengthInCrotchets: 2,
+            referenceBpm: 100
+        },
+        volume: 10
+    }
 ]
 ```
 
@@ -80,7 +80,7 @@ A case-insensitive string containing Modern MML. Whitespace is ignored when pars
 
 #### startingModifiers (Optional)
 
-An optional object containing initial modifiers applied at the start of parsing. Individual modifiers are overwritten if new values are  encountered while passing (e.g. overwriting the starting `tempo` upon parsing `T200`). The following optional starting modifiers are accepted.
+An optional object containing initial modifiers applied at the start of parsing. Individual modifiers are overwritten if new values are  encountered while passing (e.g. overwriting the starting `tempo` upon parsing `T200`). The following optional starting modifiers are accepted:
 
 ##### startingModifiers.tempo
 
@@ -105,3 +105,23 @@ Starting octave. Equivalent to prepending the input with an O value.
 Default: 10
 
 Starting volume (sometimes referred to as "velocity"). This value may not be used by all software and the exact range used will also be software-dependent. Equivalent to prepending the input with a V value.
+
+## Returns
+
+An array of Token objects with the following shape:
+
+```typescript
+{
+    mmlString: string;
+    pitchInHz: number;
+    lengthInMs: number;
+    details: {
+        baseNote: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'R' | 'P';
+        accidental: 'sharp' | 'natural' | 'flat';
+        midiNumber: number;
+        lengthInCrotchets: number;
+        referenceBpm: number;
+    };
+    volume: number;
+}
+```
