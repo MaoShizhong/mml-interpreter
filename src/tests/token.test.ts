@@ -1,11 +1,5 @@
 import { Token } from '../token';
-
-const DEFAULT_MODIFIERS = {
-    tempo: 120,
-    lengthOfNote: 4,
-    octave: 4,
-    volume: 10,
-};
+import { DEFAULT_MODIFIERS } from './modifiers.test';
 
 describe('Token object properties and values', (): void => {
     it.each([
@@ -24,7 +18,7 @@ describe('Token object properties and values', (): void => {
                 },
                 volume: 10,
             },
-            new Token('C4', DEFAULT_MODIFIERS),
+            new Token('C4', { ...DEFAULT_MODIFIERS }),
         ],
         [
             'D#8.',
@@ -41,7 +35,7 @@ describe('Token object properties and values', (): void => {
                 },
                 volume: 10,
             },
-            new Token('D#8.', DEFAULT_MODIFIERS),
+            new Token('D#8.', { ...DEFAULT_MODIFIERS }),
         ],
         [
             'D#8.',

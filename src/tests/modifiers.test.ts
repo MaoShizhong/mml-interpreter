@@ -1,6 +1,6 @@
 import { Modifiers, setModifiers } from '../modifiers';
 
-const DEFAULT_MODIFIERS: Modifiers = {
+export const DEFAULT_MODIFIERS: Modifiers = {
     tempo: 120,
     lengthOfNote: 4,
     octave: 4,
@@ -33,6 +33,23 @@ describe('sets modifiers', (): void => {
             });
         }
     );
+
+    it('converts dotted L values to the appropriate numeric duration value', (): void => {
+        const modifiersCopy = { ...DEFAULT_MODIFIERS };
+
+        setModifiers(modifiersCopy, 'L4.');
+        expect(modifiersCopy).toEqual({
+            ...modifiersCopy,
+            lengthOfNote: 8 / 3,
+        });
+
+        setModifiers(modifiersCopy, 'L4..');
+        expect(modifiersCopy).toEqual({
+            ...modifiersCopy,
+            lengthOfNote: 16 / 7,
+
+        });
+    });
 
     it('does not change modifiers object if invalid modifier property passed in', (): void => {
         const modifiersCopy = { ...DEFAULT_MODIFIERS };

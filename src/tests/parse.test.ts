@@ -157,45 +157,45 @@ describe('tokenizing durations with dots', (): void => {
         ).toEqual([0.4375, 1.5, 0.875]);
     });
 
-    it('throws RangeError if dot not attached to a duration', (): void => {
+    it('throws RangeError if dot not attached to a duration value', (): void => {
         const DotError = new RangeError(
-            `Dots must be preceded by a note duration or another dot.`
+            `Dots must be preceded by a duration value or another dot.`
         );
         expect((): string[] => toMmlStringArray('A.')).toThrow(DotError);
         expect((): string[] => toMmlStringArray('B4.C..')).toThrow(DotError);
-        expect((): string[] => toMmlStringArray('T120.')).toThrow(DotError);
-        expect((): string[] => toMmlStringArray('L8.')).toThrow(DotError);
     });
 });
 
 describe('tokenizing with modifiers', (): void => {
+    it('handles single dotted L values', (): void => {
+        const [note] = parse('L4.A');
+        expect(note.details.lengthInCrotchets).toBe(1.5);
+
+        const [note2] = parse('L8.A');
+        expect(note2.details.lengthInCrotchets).toBe(0.75);
+    });
+
+    it('handles double dotted L values', (): void => {
+        const [note] = parse('L4..A');
+        expect(note.details.lengthInCrotchets).toBe(1.75);
+
+        const [note2] = parse('L8..A');
+        expect(note2.details.lengthInCrotchets).toBe(0.875);
+    });
+
     test('changing modifiers only affects notes that follow', (): void => {
-        const STARTING_MODIFIERS = { tempo: 100, lengthOfNote: 4 };
-        const CHANGED_MODIFIERS = { tempo: 200, lengthOfNote: 8 };
-        const [firstNote, secondNote, thirdNote] = parse(
-            `AT${CHANGED_MODIFIERS.tempo}B<L${CHANGED_MODIFIERS.lengthOfNote}C`,
-            {
-                tempo: STARTING_MODIFIERS.tempo,
-                lengthOfNote: STARTING_MODIFIERS.lengthOfNote,
-            }
-        );
+        const [firstNote, secondNote, thirdNote] = parse('AT200B<L8C');
 
-        expect(firstNote.details.referenceBpm).toBe(STARTING_MODIFIERS.tempo);
+        expect(firstNote.details.referenceBpm).toBe(120);
         expect(firstNote.details.midiNumber).toBe(69);
-        expect(firstNote.details.lengthInCrotchets).toBe(
-            4 / STARTING_MODIFIERS.lengthOfNote
-        );
+        expect(firstNote.details.lengthInCrotchets).toBe(1);
 
-        expect(secondNote.details.referenceBpm).toBe(CHANGED_MODIFIERS.tempo);
+        expect(secondNote.details.referenceBpm).toBe(200);
         expect(secondNote.details.midiNumber).toBe(71);
-        expect(secondNote.details.lengthInCrotchets).toBe(
-            4 / STARTING_MODIFIERS.lengthOfNote
-        );
+        expect(secondNote.details.lengthInCrotchets).toBe(1);
 
-        expect(thirdNote.details.referenceBpm).toBe(CHANGED_MODIFIERS.tempo);
+        expect(thirdNote.details.referenceBpm).toBe(200);
         expect(thirdNote.details.midiNumber).toBe(48);
-        expect(thirdNote.details.lengthInCrotchets).toBe(
-            4 / CHANGED_MODIFIERS.lengthOfNote
-        );
+        expect(thirdNote.details.lengthInCrotchets).toBe(0.5);
     });
 });
