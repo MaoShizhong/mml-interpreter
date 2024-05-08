@@ -23,24 +23,28 @@ const DEFAULT_MODIFIERS = {
 function throwRangeErrorIfInvalidMML(
     char: string,
     previousChar: string = '',
-    modifierString: string
+    modifierString: string,
+    index: number
 ): void {
     const isDurationDot = !modifierString.length || modifierString[0] === 'L';
     const isValidDot =
         (previousChar === DOT || NUMBERS.includes(previousChar)) &&
         isDurationDot;
 
+    const mmlError = new RangeError('', { cause: index });
+
     if (!VALID_MML_CHARS.includes(char)) {
-        throw new RangeError(`${char} is not a valid MML character.`);
+        mmlError.message = `${char} is not a valid MML character.`;
+        throw mmlError;
     } else if (char === DOT && !isValidDot) {
-        throw new RangeError(
-            `Dots must be preceded by a duration value or another dot.`
-        );
+        mmlError.message = `Dots must be preceded by a duration value or another dot.`;
+        throw mmlError;
     } else if (
         ACCIDENTALS.includes(char) &&
         !NOTE_LETTERS.includes(previousChar)
     ) {
-        throw new RangeError(`Accidentals must be preceded by a note letter.`);
+        mmlError.message = `Accidentals must be preceded by a note letter.`;
+        throw mmlError;
     }
 }
 
@@ -62,17 +66,23 @@ function throwRangeErrorIfInvalidMML(
  * volume = 10 (arbitrary - software dependent)
  */
 function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
-    input = input.replaceAll(/\s/g, '').toUpperCase();
+    input = input.toUpperCase();
 
     const tokens: Token[] = [];
     const modifiers = { ...DEFAULT_MODIFIERS, ...startingModifiers };
     let currentNoteString = '';
     let currentModifierString = '';
-    for (const char of input) {
+    for (let i = 0; i < input.length; i++) {
+        const char = input[i];
+        if (/\s/.test(char)) {
+            continue;
+        }
+
         throwRangeErrorIfInvalidMML(
             char,
             currentNoteString.at(-1),
-            currentModifierString
+            currentModifierString,
+            i
         );
 
         // Number('0') === false

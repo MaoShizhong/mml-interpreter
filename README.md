@@ -32,6 +32,7 @@ console.log(mmlTokens);
         mmlString: 'D',
         pitchInHz: 587,
         lengthInMs: 156,
+        offsetInMs: 0,
         details: {
             baseNote: 'D',
             accidental: 'natural',
@@ -45,6 +46,7 @@ console.log(mmlTokens);
         mmlString: 'E4.',
         pitchInHz: 659,
         lengthInMs: 469,
+        offsetInMs: 156,
         details: {
             baseNote: 'E',
             accidental: 'natural',
@@ -58,6 +60,7 @@ console.log(mmlTokens);
         mmlString: 'F#',
         pitchInHz: 370,
         lengthInMs: 1200,
+        offsetInMs: 625,
         details: {
             baseNote: 'F',
             accidental: 'sharp',
@@ -76,7 +79,16 @@ console.log(mmlTokens);
 
 #### input
 
-A case-insensitive string containing Modern MML. Whitespace is ignored when parsing. If any invalid characters are encountered during parsing (including characters that are out of place, such as a `#` that does not follow a note letter), an error is thrown.
+A case-insensitive string containing Modern MML. Whitespace is ignored when parsing. If any invalid characters are encountered during parsing (including characters that are out of place, such as a `#` that does not follow a note letter), an error is thrown with the following shape:
+
+```javascript
+{
+    // Human-readable message describing the reason for throwing
+    message: string;
+    // Index of the throwing character in the input string
+    cause: number;
+}
+```
 
 #### startingModifiers (Optional)
 
@@ -115,6 +127,7 @@ An array of Token objects with the following shape:
     mmlString: string;
     pitchInHz: number;
     lengthInMs: number;
+    offsetInMs: number;
     details: {
         baseNote: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'R' | 'P';
         accidental: 'sharp' | 'natural' | 'flat';

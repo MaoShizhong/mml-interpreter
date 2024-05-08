@@ -21,10 +21,15 @@ export class Token {
     mmlString: string;
     pitchInHz: number | null;
     lengthInMs: number;
+    offsetInMs: number;
     details: NoteDetails;
     volume: number;
 
-    constructor(noteString: string, modifiers: Modifiers) {
+    constructor(
+        noteString: string,
+        modifiers: Modifiers,
+        previousToken?: Token
+    ) {
         const { baseNote, semitoneShift, attachedDurationMultiplier } =
             this.#splitMmlString(noteString);
         const durationMultiplier =
@@ -47,6 +52,9 @@ export class Token {
             modifiers.tempo,
             durationMultiplier
         );
+        this.offsetInMs = previousToken
+            ? previousToken.offsetInMs + previousToken.lengthInMs
+            : 0;
         this.volume = modifiers.volume;
     }
 
@@ -68,7 +76,7 @@ export class Token {
         const noteDurationMultiplier = 4 / Number(noteDuration);
 
         const dots = str.match(/\.+/g)?.[0] ?? [];
-        const dotsMultiplier = 2 - ( 1 / 2 ** dots.length);
+        const dotsMultiplier = 2 - 1 / 2 ** dots.length;
 
         const attachedDurationMultiplier =
             noteDurationMultiplier * dotsMultiplier;
