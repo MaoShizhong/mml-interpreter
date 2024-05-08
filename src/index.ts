@@ -95,7 +95,7 @@ function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
             currentNoteString.length;
 
         if (isFinishedParsingNote) {
-            tokens.push(new Token(currentNoteString, modifiers));
+            tokens.push(new Token(currentNoteString, modifiers, tokens.at(-1)));
             currentNoteString = '';
         }
 
@@ -122,7 +122,7 @@ function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
 
     // Handle final token/modifier
     if (currentNoteString) {
-        tokens.push(new Token(currentNoteString, modifiers));
+        tokens.push(new Token(currentNoteString, modifiers, tokens.at(-1)));
         setModifiers(modifiers, currentModifierString);
     }
 

@@ -199,3 +199,12 @@ describe('tokenizing with modifiers', (): void => {
         expect(thirdNote.details.lengthInCrotchets).toBe(0.5);
     });
 });
+
+describe('sequential offsets', (): void => {
+    test('parse offsets sequential tokens based on previous token note length', (): void => {
+        const tokens = parse('C D E F8 G16 A B');
+        expect(tokens.map((token): number => token.offsetInMs)).toEqual([
+            0, 500, 1000, 1500, 1750, 1875, 2375
+        ]);
+    });
+});
