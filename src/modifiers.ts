@@ -6,7 +6,10 @@ export function setModifiers(
     modifierString: string
 ): void {
     const modifierPrefix = modifierString[0];
-    const newModifierValue = Number(modifierString.substring(1));
+    const dots = modifierString.match(/\.+/g)?.[0] ?? [];
+    const digits = modifierString.match(/\d+/g)?.[0] ?? '';
+    const newModifierValue = toNumericNoteDuration(Number(digits), dots.length);
+
     let modifier: Modifier;
     switch (modifierPrefix) {
         case 'T':
@@ -26,4 +29,15 @@ export function setModifiers(
     }
 
     modifiers[modifier] = newModifierValue;
+}
+
+function toNumericNoteDuration(baseNumber: number, dotCount: number): number {
+    let numerator = 1;
+    let denominator = baseNumber;
+    for (let i = 0; i < dotCount; i++) {
+        numerator *= 2;
+        numerator += 1;
+        denominator *= 2;
+    }
+    return denominator / numerator;
 }

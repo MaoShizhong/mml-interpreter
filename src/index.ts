@@ -25,15 +25,16 @@ function throwRangeErrorIfInvalidMML(
     previousChar: string = '',
     modifierString: string
 ): void {
+    const isDurationDot = !modifierString.length || modifierString[0] === 'L';
     const isValidDot =
         (previousChar === DOT || NUMBERS.includes(previousChar)) &&
-        !modifierString.length;
+        isDurationDot;
 
     if (!VALID_MML_CHARS.includes(char)) {
         throw new RangeError(`${char} is not a valid MML character.`);
     } else if (char === DOT && !isValidDot) {
         throw new RangeError(
-            `Dots must be preceded by a note duration or another dot.`
+            `Dots must be preceded by a duration value or another dot.`
         );
     } else if (
         ACCIDENTALS.includes(char) &&
@@ -77,6 +78,8 @@ function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
         // Number('0') === false
         const isDurationNumber =
             NUMBERS.includes(char) && currentNoteString.length;
+        const isNoteDot = char === DOT && currentNoteString.length;
+        const isModifierDot = char === DOT && currentModifierString.length;
         const isFinishedParsingNote =
             (LETTERS.includes(char) || OCTAVE_SHIFTS.includes(char)) &&
             currentNoteString.length;
@@ -100,9 +103,9 @@ function parse(input: string, startingModifiers?: Partial<Modifiers>): Token[] {
         } else if (SHARPS.includes(char)) {
             // Quirk of Modern MML allows for both + and # as sharps, but only a single flat character
             currentNoteString += '#';
-        } else if (char === FLAT || char === DOT || isDurationNumber) {
+        } else if (char === FLAT || isNoteDot || isDurationNumber) {
             currentNoteString += char;
-        } else if (NUMBERS.includes(char)) {
+        } else if (NUMBERS.includes(char) || isModifierDot) {
             currentModifierString += char;
         }
     }
