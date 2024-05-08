@@ -9,6 +9,7 @@ describe('Token object properties and values', (): void => {
                 mmlString: 'C4',
                 lengthInMs: 500,
                 pitchInHz: 262,
+                offsetInMs: 0,
                 details: {
                     midiNumber: 60,
                     baseNote: 'C',
@@ -26,6 +27,7 @@ describe('Token object properties and values', (): void => {
                 mmlString: 'D#8.',
                 lengthInMs: 375,
                 pitchInHz: 311,
+                offsetInMs: 0,
                 details: {
                     midiNumber: 63,
                     baseNote: 'D',
@@ -43,6 +45,7 @@ describe('Token object properties and values', (): void => {
                 mmlString: 'D#8.',
                 lengthInMs: 750,
                 pitchInHz: 311,
+                offsetInMs: 0,
                 details: {
                     midiNumber: 63,
                     baseNote: 'D',
@@ -60,6 +63,7 @@ describe('Token object properties and values', (): void => {
                 mmlString: 'D#8..',
                 lengthInMs: 875,
                 pitchInHz: 311,
+                offsetInMs: 0,
                 details: {
                     midiNumber: 63,
                     baseNote: 'D',
@@ -77,6 +81,7 @@ describe('Token object properties and values', (): void => {
                 mmlString: 'D#4...',
                 lengthInMs: 1875,
                 pitchInHz: 311,
+                offsetInMs: 0,
                 details: {
                     midiNumber: 63,
                     baseNote: 'D',
@@ -94,6 +99,7 @@ describe('Token object properties and values', (): void => {
                 mmlString: 'A-',
                 lengthInMs: 1000,
                 pitchInHz: 1661,
+                offsetInMs: 0,
                 details: {
                     midiNumber: 92,
                     baseNote: 'A',
@@ -115,6 +121,7 @@ describe('Token object properties and values', (): void => {
                 mmlString: 'R',
                 lengthInMs: 208,
                 pitchInHz: null,
+                offsetInMs: 0,
                 details: {
                     midiNumber: null,
                     baseNote: 'R',
@@ -137,4 +144,23 @@ describe('Token object properties and values', (): void => {
             expect(token).toEqual(expectedToken);
         }
     );
+
+    it('offsetInMs is not 0 if previous Token provided', (): void => {
+        const firstToken = new Token('A', { ...DEFAULT_MODIFIERS });
+        const secondToken = new Token(
+            'A',
+            { ...DEFAULT_MODIFIERS },
+            firstToken
+        );
+        const thirdToken = new Token(
+            'A',
+            { ...DEFAULT_MODIFIERS },
+            secondToken
+        );
+        expect(secondToken).toHaveProperty('offsetInMs', firstToken.lengthInMs);
+        expect(thirdToken).toHaveProperty(
+            'offsetInMs',
+            firstToken.lengthInMs + secondToken.lengthInMs
+        );
+    });
 });
